@@ -1,6 +1,9 @@
-const mysql = require('mysql2/promise');
+const mysql = require("mysql2/promise");
+const { patch } = require("../routes/usuariosRoutes");
 
-require("dotenv").config(); // ← sin path, carga el .env normal
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV || "development"}`,
+});
 
 const pool = mysql.createPool({
   host: process.env.PMA_HOST || "127.0.0.1",
@@ -10,15 +13,16 @@ const pool = mysql.createPool({
   port: process.env.MYSQL_PORT || 3306,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
 });
 
-pool.getConnection()
-  .then(connection => {
+pool
+  .getConnection()
+  .then((connection) => {
     console.log("✅ Conexión a MySQL establecida");
     connection.release();
   })
-  .catch(err => {
+  .catch((err) => {
     console.error("❌ Error conectando a MySQL:", err.message);
   });
 
