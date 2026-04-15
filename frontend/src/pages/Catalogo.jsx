@@ -8,9 +8,13 @@ const Catalogo = () => {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const BACKEND_URL = 'http://localhost:3000';
+
   useEffect(() => {
     getProductos()
-      .then(res => setProductos(res.data))
+      .then(res => {
+        setProductos(res.data);
+      })
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
   }, []);
@@ -32,7 +36,10 @@ const Catalogo = () => {
             {productos.map(producto => (
               <Link to={`/producto/${producto.id_producto}`} key={producto.id_producto} style={styles.card}>
                 <img
-                  src={producto.url_imagen || '/assets/img/camis/cami_azul.JPG'}
+                  src={producto.imagen_url 
+                    ? `${BACKEND_URL}${producto.imagen_url}` 
+                    : '/assets/img/camis/cami_azul.JPG'
+                  }
                   alt={producto.nombre}
                   style={styles.img}
                 />

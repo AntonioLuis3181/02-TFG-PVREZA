@@ -30,6 +30,8 @@ app.use(express.json());
 app.use(cors()); // Permite conexiones desde tu app móvil (React Native) y web
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // ============================================
 // RUTAS
 // ============================================
