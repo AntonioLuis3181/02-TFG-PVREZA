@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: db
--- Tiempo de generación: 13-04-2026 a las 16:17:50
+-- Tiempo de generación: 15-04-2026 a las 16:49:30
 -- Versión del servidor: 8.0.44
--- Versión de PHP: 8.3.26
+-- Versión de PHP: 8.3.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -35,6 +35,13 @@ CREATE TABLE `detalles_pedido` (
   `precio_unitario` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Volcado de datos para la tabla `detalles_pedido`
+--
+
+INSERT INTO `detalles_pedido` (`id_detalle`, `id_pedido`, `id_stock`, `cantidad`, `precio_unitario`) VALUES
+(1, 1, 1, 1, 29.99);
+
 -- --------------------------------------------------------
 
 --
@@ -49,6 +56,13 @@ CREATE TABLE `pedidos` (
   `fecha_pedido` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Volcado de datos para la tabla `pedidos`
+--
+
+INSERT INTO `pedidos` (`id_pedido`, `id_usuario`, `total`, `estado`, `fecha_pedido`) VALUES
+(1, 1, 29.99, 'pendiente', '2026-04-15 09:17:04');
+
 -- --------------------------------------------------------
 
 --
@@ -60,17 +74,18 @@ CREATE TABLE `productos` (
   `nombre` varchar(100) NOT NULL,
   `descripcion` text,
   `precio` decimal(10,2) NOT NULL,
-  `coleccion` varchar(100) DEFAULT NULL
+  `coleccion` varchar(100) DEFAULT NULL,
+  `imagen_url` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `productos`
 --
 
-INSERT INTO `productos` (`id_producto`, `nombre`, `descripcion`, `precio`, `coleccion`) VALUES
-(1, 'PVREZA CLASSIC TEE', '100% algodón orgánico, 230g. Diseñada en LEBRIJA, SEVILLA.', 28.00, 'DROP GENESIS'),
-(2, 'CREATED TO CREATE TEE', '100% algodón orgánico, 230g. Diseñada en LEBRIJA, SEVILLA.', 28.00, 'DROP GENESIS'),
-(3, 'GXS TEE', '100% algodón orgánico, 230g. Diseñada en LEBRIJA, SEVILLA.', 28.00, 'DROP GENESIS');
+INSERT INTO `productos` (`id_producto`, `nombre`, `descripcion`, `precio`, `coleccion`, `imagen_url`) VALUES
+(1, 'PVREZA CLASSIC TEE', '100% algodón orgánico, 230g. Diseñada en LEBRIJA, SEVILLA.', 28.00, 'DROP GENESIS', '/uploads/productos/classic_tee.jpg'),
+(2, 'CREATED TO CREATE TEE', '100% algodón orgánico, 230g. Diseñada en LEBRIJA, SEVILLA.', 28.00, 'DROP GENESIS', '/uploads/productos/create_tee.jpg'),
+(3, 'GXS TEE', '100% algodón orgánico, 230g. Diseñada en LEBRIJA, SEVILLA.', 28.00, 'DROP GENESIS', '/uploads/productos/gxs_tee.jpg');
 
 -- --------------------------------------------------------
 
@@ -92,7 +107,7 @@ CREATE TABLE `stock` (
 --
 
 INSERT INTO `stock` (`id_stock`, `id_producto`, `talla`, `color`, `cantidad`, `url_modelo_3d`) VALUES
-(1, 1, 'S', 'Negro', 20, NULL),
+(1, 1, 'S', 'Negro', 19, NULL),
 (2, 1, 'M', 'Negro', 20, NULL),
 (3, 1, 'L', 'Negro', 20, NULL),
 (4, 1, 'XL', 'Negro', 20, NULL),
@@ -122,6 +137,14 @@ CREATE TABLE `usuarios` (
   `rol` enum('user','admin') DEFAULT 'user',
   `fecha_registro` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`id_usuario`, `nombre`, `email`, `password`, `altura`, `peso`, `edad`, `rol`, `fecha_registro`) VALUES
+(1, 'Antonio', 'antonio@test.com', '$2b$10$jUOq/mgsSMQsLqQrWEQBQOU6Axl.dM6vXby.t0TMmm9L5qAPWtb5G', NULL, NULL, NULL, 'user', '2026-04-14 17:55:33'),
+(4, 'Admin', 'admin@pvreza.com', '$2b$10$hJjWg6X1gjUtb3vVQX/z6.aSfLctc4jleL1qR8C1RdWgNpIHxwRWW', NULL, NULL, NULL, 'user', '2026-04-15 14:35:21');
 
 --
 -- Índices para tablas volcadas
@@ -170,13 +193,13 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `detalles_pedido`
 --
 ALTER TABLE `detalles_pedido`
-  MODIFY `id_detalle` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_detalle` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id_pedido` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_pedido` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -194,7 +217,7 @@ ALTER TABLE `stock`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas
