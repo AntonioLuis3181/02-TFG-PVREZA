@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { CartContext } from '../context/CartContext';
-import '../styles/cart.css'; // Ahora crearemos este CSS
+import '../styles/cart.css';
 
 const CartDrawer = () => {
     const { cart, isCartOpen, setIsCartOpen, removeFromCart, cartTotal } = useContext(CartContext);

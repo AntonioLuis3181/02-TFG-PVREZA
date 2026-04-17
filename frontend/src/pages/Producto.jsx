@@ -23,8 +23,6 @@ const Producto = () => {
     const [relacionados, setRelacionados] = useState([]);
 
     useEffect(() => {
-        setFotoActiva(0);
-        setTallaSeleccionada(null);
         window.scrollTo(0, 0);
 
         getProductoById(id)
@@ -34,6 +32,8 @@ const Producto = () => {
                     setProducto(data.producto);
                     setStock(data.stock);
                     setImagenes(data.imagenes.map(img => img.url));
+                    setFotoActiva(0);
+                    setTallaSeleccionada(null);
                 }
                 setLoading(false);
             })
@@ -147,7 +147,6 @@ const Producto = () => {
                         disabled={!tallaSeleccionada}
                         onClick={() => addToCart(producto, tallaSeleccionada)} 
                     >
-                        {/* 👇 Aquí va el texto que ve el usuario */}
                         {tallaSeleccionada ? 'Añadir al carrito' : 'Selecciona una talla'}
                     </button>
 
