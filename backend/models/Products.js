@@ -14,7 +14,20 @@ const Product = {
     return results[0];
   },
 
-  getVariantes: async (id) => {
+  getByIdCompleto: async (id) => {
+  const [producto] = await db.query(
+    'SELECT * FROM productos WHERE id_producto = ?', [id]
+  );
+  const [stock] = await db.query(
+    'SELECT * FROM stock WHERE id_producto = ? ORDER BY talla', [id]
+  );
+  const [imagenes] = await db.query(
+    'SELECT * FROM imagenes_producto WHERE id_producto = ? ORDER BY orden', [id]
+  );
+  return { producto: producto[0], stock, imagenes };
+},
+
+  getVariantes: async (id) => { 
     const [results] = await db.query(
       'SELECT * FROM stock WHERE id_producto = ?', [id]
     );

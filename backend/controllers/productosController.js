@@ -12,29 +12,16 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const producto = await Product.getById(req.params.id);
-    
+    const { producto, stock, imagenes } = await Product.getByIdCompleto(req.params.id);
     if (!producto) {
       return res.status(404).json({ ok: false, message: 'Producto no encontrado' });
     }
-
-    const variantes = await Product.getVariantes(req.params.id);
-    // 💥 NUEVO: Pedimos las imágenes al modelo
-    const imagenes = await Product.getImagenes(req.params.id); 
-
-    res.status(200).json({ 
-        ok: true, 
-        producto: producto, 
-        stock: variantes,
-        imagenes: imagenes // 💥 NUEVO: Las enviamos al frontend
-    });
-
+    res.status(200).json({ ok: true, producto, stock, imagenes });
   } catch (error) {
     console.error('Error en getById:', error);
     res.status(500).json({ ok: false, message: 'Error interno del servidor' });
   }
 };
-
 const getVariantes = async (req, res) => {
   try {
     const variantes = await Product.getVariantes(req.params.id);
