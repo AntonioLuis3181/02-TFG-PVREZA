@@ -162,7 +162,6 @@ const Producto = () => {
                 </div>
             </section>
 
-            {/* TAMBIÉN TE PUEDE GUSTAR */}
             {relacionados.length > 0 && (
                 <section style={stylesRel.section}>
                     <h2 style={stylesRel.titulo}>TAMBIÉN TE PUEDE GUSTAR</h2>
