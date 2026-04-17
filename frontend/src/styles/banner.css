@@ -1,0 +1,43 @@
+/* banner.css */
+.pvreza-banner-container {
+    width: 100%;
+    background-color: #000; /* Fondo negro PVREZA */
+    color: #fff;
+    overflow: hidden;
+    padding: 8px 0;
+    position: relative;
+    z-index: 1000;
+    /* Si quieres que se quede siempre pegado arriba al hacer scroll, descomenta esto: */
+    /* position: fixed; top: 0; */
+}
+
+.pvreza-banner-track {
+    display: flex;
+    width: max-content;
+    /* 20s es la velocidad. Hazlo más pequeño (ej: 10s) para que vaya más rápido */
+    animation: scroll-banner 20s linear infinite;
+}
+
+.pvreza-banner-track:hover {
+    /* Toque premium: la animación se pausa si el usuario pone el ratón encima */
+    animation-play-state: paused;
+}
+
+.pvreza-banner-track span {
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    padding-right: 15px; /* Espacio antes de que empiece la siguiente repetición */
+}
+
+@keyframes scroll-banner {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        /* Se desplaza exactamente la mitad de su anchura total, 
+           lo que crea la ilusión óptica de un bucle perfecto */
+        transform: translateX(-50%); 
+    }
+}

@@ -1,14 +1,19 @@
-const Banner = () => (
-  <section style={styles.banner}>
-    <h2 style={styles.title}>PVREZA CLUB®</h2>
-    <p style={styles.subtitle}>CREATED TO CREATE</p>
-  </section>
-);
+import '../styles/banner.css';
 
-const styles = {
-  banner: { textAlign: 'center', padding: '48px 24px', backgroundColor: '#fff' },
-  title: { fontSize: '28px', letterSpacing: '6px', fontWeight: '700', margin: '0 0 8px' },
-  subtitle: { fontSize: '13px', letterSpacing: '4px', color: '#666', margin: 0 },
+const Banner = () => {
+    // Puedes cambiar este mensaje por el que quieras
+    const mensaje = "ENVÍO GRATIS EN PEDIDOS SUPERIORES A 60€ • DROP GENESIS YA DISPONIBLE • ";
+    
+    return (
+        <div className="pvreza-banner-container">
+            <div className="pvreza-banner-track">
+                <span>{mensaje}</span>
+                <span>{mensaje}</span>
+                <span>{mensaje}</span>
+                <span>{mensaje}</span>
+            </div>
+        </div>
+    );
 };
 
 export default Banner;
