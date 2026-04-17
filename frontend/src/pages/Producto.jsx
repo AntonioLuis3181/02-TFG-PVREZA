@@ -9,7 +9,7 @@ const BACKEND_URL = 'http://localhost:3000';
 const Producto = () => {
     const { id } = useParams();
 
-    const {addToCart} = useContext(CartContext);
+    const { addToCart } = useContext(CartContext);
 
     const [producto, setProducto] = useState(null);
     const [stock, setStock] = useState([]);
@@ -145,24 +145,30 @@ const Producto = () => {
                     <button
                         style={{ ...styles.cartBtn, opacity: tallaSeleccionada ? 1 : 0.5 }}
                         disabled={!tallaSeleccionada}
-                        onClick={() => addToCart(producto, tallaSeleccionada)} 
+                        onClick={() => addToCart(producto, tallaSeleccionada)}
                     >
                         {tallaSeleccionada ? 'Añadir al carrito' : 'Selecciona una talla'}
                     </button>
 
                     <details style={styles.details_section}>
-                        <summary style={styles.summary}><strong>Detalles del Producto</strong></summary>
+                        <summary style={styles.summary}><strong>DETALLES DEL PRODUCTO</strong></summary>
                         <p style={styles.detailsText}>{producto.descripcion}</p>
                     </details>
 
                     <details style={styles.details_section}>
-                        <summary style={styles.summary}><strong>Guía de Tallas</strong></summary>
-                        <ul style={styles.detailsText}>
-                            <li>S: Pecho 88-92 cm</li>
-                            <li>M: Pecho 92-96 cm</li>
-                            <li>L: Pecho 96-100 cm</li>
-                            <li>XL: Pecho 100-104 cm</li>
-                        </ul>
+                        <summary style={styles.summary}><strong>GUÍA DE TALLAS</strong></summary>
+                        <div style={{ marginTop: '15px', padding: '0 10px' }}>
+                            <img
+                                src="/assets/img/guia_tallas.png"
+                                alt="Guía de Tallas PVREZA"
+                                style={{
+                                    width: '100%',
+                                    height: 'auto',
+                                    display: 'block',
+                                    borderRadius: '4px'
+                                }}
+                            />
+                        </div>
                     </details>
                 </div>
             </section>

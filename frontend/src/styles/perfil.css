@@ -1,0 +1,91 @@
+.perfil-page {
+    max-width: 800px;
+    margin: 100px auto;
+    padding: 0 20px;
+}
+
+.perfil-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 2px solid #000;
+    padding-bottom: 15px;
+    margin-bottom: 40px;
+}
+
+.perfil-header h1 {
+    font-size: 2.5rem;
+    letter-spacing: -1px;
+    margin: 0;
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+
+.user-info-card {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.info-group label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #888;
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+.info-group p {
+    font-size: 1.1rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+.role-tag {
+    display: inline-block;
+    background: #000;
+    color: #fff;
+    padding: 2px 8px;
+    font-size: 0.7rem !important;
+}
+
+.perfil-actions h2 {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    letter-spacing: 2px;
+}
+
+.action-btn:hover {
+    background: #000;
+    color: #fff;
+}
+
+.action-btn.admin {
+    background: #000;
+    color: #fff;
+}
+
+.action-btn.admin:hover {
+    background: #333;
+}

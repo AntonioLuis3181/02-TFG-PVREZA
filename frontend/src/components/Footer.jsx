@@ -22,7 +22,6 @@ const Footer = () => {
             <h3>TIENDA</h3>
             <Link to="/catalogo">Comprar Todo</Link>
             <Link to="/catalogo/genesis">Drop Genesis</Link>
-            <Link to="/catalogo/accesorios">Accesorios</Link>
           </div>
           
           <div className="footer-column">

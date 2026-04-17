@@ -1,22 +1,128 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Banner from '../components/Banner';
+import usePageTitle from '../hooks/usePageTitle'; 
+
+// ============================================
+// CONFIGURA AQUÍ TU HERO
+// Pon 'video' o 'carousel'
+// ============================================
+const HERO_TYPE = 'video'; // 'video' | 'carousel'
+
+const HERO_VIDEOS = [
+  '/assets/video/video-fondo.mp4',
+  '/assets/video/AB1946FC-E73B-43A4-A7BF-9C71844C20F9.mov',
+];
+
+const HERO_FOTOS = [
+  '/assets/img/ISLA BONITA/IMG_1943.JPG',
+  '/assets/img/ISLA_BONITA/IMG_1866.JPG',
+  '/assets/img/camis/cami_gris.JPG',
+];
+// ============================================
+
+const SplashScreen = ({ onFinish }) => {
+  useEffect(() => {
+    const timer = setTimeout(onFinish, 2000);
+    return () => clearTimeout(timer);
+  }, [onFinish]);
+
+  return (
+    <div style={splashStyles.overlay}>
+      <img src="/assets/img/png_en_negro.png" alt="Pvreza Club" style={splashStyles.logo} />
+    </div>
+  );
+};
+
+const HeroCarousel = () => {
+  const [activa, setActiva] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiva(prev => (prev === HERO_FOTOS.length - 1 ? 0 : prev + 1));
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div style={heroStyles.wrapper}>
+      {HERO_FOTOS.map((foto, index) => (
+        <img
+          key={index}
+          src={foto}
+          alt={`Hero ${index + 1}`}
+          style={{
+            ...heroStyles.slide,
+            opacity: activa === index ? 1 : 0,
+          }}
+        />
+      ))}
+      {/* Puntos */}
+      <div style={heroStyles.dots}>
+        {HERO_FOTOS.map((_, index) => (
+          <div
+            key={index}
+            onClick={() => setActiva(index)}
+            style={{ ...heroStyles.dot, backgroundColor: activa === index ? '#fff' : 'rgba(255,255,255,0.4)' }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const HeroVideo = () => {
+  // 1. Estado para saber si estamos en móvil (pantallas de menos de 768px de ancho)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // 2. Efecto para escuchar si el usuario redimensiona la ventana
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    // Limpiamos el evento al desmontar
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // 3. Elegimos el vídeo según el dispositivo
+  // IMPORTANTE: Asegúrate de tener estos dos archivos en tu carpeta public/assets/video/
+  const videoSource = isMobile 
+    ? '/assets/video/AB1946FC-E73B-43A4-A7BF-9C71844C20F9.mov' 
+    : '/assets/video/video-fondo.mp4';
+
+  return (
+    <div style={heroStyles.wrapper}>
+      <video
+        key={videoSource} // La clave hace que React recargue el vídeo si cambia de móvil a desktop
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={heroStyles.video}
+      >
+        <source src={videoSource} type="video/mp4" />
+      </video>
+    </div>
+  );
+};
 
 const Home = () => {
+  usePageTitle("Inicio");
+  const [showSplash, setShowSplash] = useState(true);
+
+  if (showSplash) {
+    return <SplashScreen onFinish={() => setShowSplash(false)} />;
+  }
+
   return (
     <div>
-      <Banner />
-
-      {/* Hero */}
-      <section style={styles.hero}>
-        <img src="/assets/img/camis/cami_azul.JPG" alt="Hero" style={styles.heroImg} />
-        <div style={styles.heroOverlay}>
-          <p style={styles.heroTag}>NEW DROP</p>
-          <h2 style={styles.heroTitle}>GENESIS</h2>
-          <Link to="/catalogo/genesis" style={styles.heroBtn}>SHOP NOW</Link>
-        </div>
+      {/* HERO */}
+      <section style={{ position: 'relative', height: '90vh', overflow: 'hidden' }}>
+        {HERO_TYPE === 'carousel' ? <HeroCarousel /> : <HeroVideo />}
       </section>
 
-      {/* Drops */}
+      {/* DROPS */}
       <section style={styles.drops}>
         <h2 style={styles.sectionTitle}>DROPS</h2>
         <div style={styles.dropsGrid}>
@@ -34,13 +140,44 @@ const Home = () => {
   );
 };
 
+// ============================================
+// ESTILOS
+// ============================================
+
+const splashStyles = {
+  overlay: {
+    position: 'fixed', inset: 0, backgroundColor: '#fff',
+    display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999,
+    animation: 'fadeOut 0.5s ease 1.5s forwards',
+  },
+  logo: { height: '60px', objectFit: 'contain' },
+};
+
+const heroStyles = {
+  wrapper: { position: 'relative', width: '100%', height: '100%' },
+  slide: {
+    position: 'absolute', inset: 0, width: '100%', height: '100%',
+    objectFit: 'cover', transition: 'opacity 1s ease-in-out',
+  },
+  video: { width: '100%', height: '100%', objectFit: 'cover' },
+  overlay: {
+    position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.35)',
+    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+  },
+  tag: { color: '#fff', fontSize: '11px', letterSpacing: '4px', marginBottom: '8px' },
+  title: { color: '#fff', fontSize: '48px', letterSpacing: '8px', fontWeight: '700', margin: '0 0 24px' },
+  btn: {
+    padding: '14px 40px', backgroundColor: '#fff', color: '#000',
+    textDecoration: 'none', fontSize: '12px', letterSpacing: '3px', fontWeight: '600',
+  },
+  dots: {
+    position: 'absolute', bottom: '24px', width: '100%',
+    display: 'flex', justifyContent: 'center', gap: '8px', zIndex: 10,
+  },
+  dot: { width: '8px', height: '8px', borderRadius: '50%', cursor: 'pointer', transition: 'background-color 0.3s' },
+};
+
 const styles = {
-  hero: { position: 'relative', height: '80vh', overflow: 'hidden' },
-  heroImg: { width: '100%', height: '100%', objectFit: 'cover' },
-  heroOverlay: { position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.3)' },
-  heroTag: { color: '#fff', fontSize: '11px', letterSpacing: '4px', marginBottom: '8px' },
-  heroTitle: { color: '#fff', fontSize: '48px', letterSpacing: '8px', fontWeight: '700', margin: '0 0 24px' },
-  heroBtn: { padding: '14px 40px', backgroundColor: '#fff', color: '#000', textDecoration: 'none', fontSize: '12px', letterSpacing: '3px', fontWeight: '600' },
   drops: { padding: '64px 24px' },
   sectionTitle: { textAlign: 'center', fontSize: '13px', letterSpacing: '4px', marginBottom: '40px', color: '#999' },
   dropsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', maxWidth: '900px', margin: '0 auto' },

@@ -1,7 +1,7 @@
 /* banner.css */
 .pvreza-banner-container {
     width: 100%;
-    background-color: #000; /* Fondo negro PVREZA */
+    background-color: #1e2b3d; /* Fondo negro PVREZA */
     color: #fff;
     overflow: hidden;
     padding: 8px 0;
@@ -28,7 +28,7 @@
     font-weight: bold;
     letter-spacing: 2px;
     white-space: nowrap;
-    padding-right: 15px; /* Espacio antes de que empiece la siguiente repetición */
+    padding-right: 45px; /* Espacio antes de que empiece la siguiente repetición */
 }
 
 @keyframes scroll-banner {
