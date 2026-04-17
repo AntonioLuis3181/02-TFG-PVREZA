@@ -1,11 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProductoById, getProductos } from '../api/productosApi';
+import { CartContext } from '../context/CartContext';
+import '../styles/producto.css';
 
 const BACKEND_URL = 'http://localhost:3000';
 
 const Producto = () => {
     const { id } = useParams();
+
+    const {addToCart} = useContext(CartContext);
 
     const [producto, setProducto] = useState(null);
     const [stock, setStock] = useState([]);
@@ -141,7 +145,9 @@ const Producto = () => {
                     <button
                         style={{ ...styles.cartBtn, opacity: tallaSeleccionada ? 1 : 0.5 }}
                         disabled={!tallaSeleccionada}
+                        onClick={() => addToCart(producto, tallaSeleccionada)} 
                     >
+                        {/* 👇 Aquí va el texto que ve el usuario */}
                         {tallaSeleccionada ? 'Añadir al carrito' : 'Selecciona una talla'}
                     </button>
 

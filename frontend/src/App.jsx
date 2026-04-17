@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+import CartDrawer from './components/CartDrawer';
 
 import Home from './pages/Home';
 import Catalogo from './pages/Catalogo';
