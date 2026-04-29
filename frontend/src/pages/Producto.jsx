@@ -1,15 +1,18 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProductoById, getProductos } from '../api/productosApi';
 import { CartContext } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext'; // 💥 Importamos Auth
+import AvatarCreator from '../components/AvatarCreator'; // 💥 Importamos el creador 3D
 import '../styles/producto.css';
 
 const BACKEND_URL = 'http://localhost:3000';
 
 const Producto = () => {
     const { id } = useParams();
-
     const { addToCart } = useContext(CartContext);
+    const { isAuthenticated, user } = useAuth(); // 💥 Obtenemos estado de login
 
     const [producto, setProducto] = useState(null);
     const [stock, setStock] = useState([]);
@@ -18,13 +21,22 @@ const Producto = () => {
     const [tallaSeleccionada, setTallaSeleccionada] = useState(null);
     const [fotoActiva, setFotoActiva] = useState(0);
     const [isTryOnOpen, setIsTryOnOpen] = useState(false);
+    
+    // Estados para el avatar
     const [altura, setAltura] = useState(175);
     const [peso, setPeso] = useState(75);
     const [relacionados, setRelacionados] = useState([]);
 
+    // 💥 Efecto para cargar datos del usuario si está logueado al abrir el probador
+    useEffect(() => {
+        if (isTryOnOpen && isAuthenticated && user) {
+            setAltura(user.altura || 175);
+            setPeso(user.peso || 75);
+        }
+    }, [isTryOnOpen, isAuthenticated, user]);
+
     useEffect(() => {
         window.scrollTo(0, 0);
-
         getProductoById(id)
             .then(res => {
                 const data = res.data;
@@ -46,7 +58,6 @@ const Producto = () => {
             const otros = res.data.filter(p => p.id_producto !== parseInt(id));
             setRelacionados(otros);
         });
-
     }, [id]);
 
     const siguiente = () => setFotoActiva(prev => (prev === imagenes.length - 1 ? 0 : prev + 1));
@@ -57,14 +68,12 @@ const Producto = () => {
 
     return (
         <main>
-            {/* Banner */}
             <section style={styles.banner}>
                 <h2 style={styles.bannerTitle}>PVREZA CLUB®</h2>
                 <p style={styles.bannerSub}>CREATED TO CREATE</p>
             </section>
 
             <section style={styles.product}>
-
                 {/* CARRUSEL */}
                 <div style={styles.carouselWrapper}>
                     <div style={styles.carouselViewport}>
@@ -74,37 +83,20 @@ const Producto = () => {
                                     <img
                                         key={index}
                                         src={`${BACKEND_URL}${url}`}
-                                        alt={`${producto.nombre} - vista ${index + 1}`}
+                                        alt={`${producto.nombre}`}
                                         style={styles.carouselImg}
                                     />
                                 ))
                             ) : (
-                                <img
-                                    src={`${BACKEND_URL}${producto.imagen_url}`}
-                                    alt={producto.nombre}
-                                    style={styles.carouselImg}
-                                />
+                                <img src={`${BACKEND_URL}${producto.imagen_url}`} alt={producto.nombre} style={styles.carouselImg} />
                             )}
                         </div>
                     </div>
-
                     {imagenes.length > 1 && (
                         <>
                             <button onClick={anterior} style={{ ...styles.arrow, left: '12px' }}>&#10094;</button>
                             <button onClick={siguiente} style={{ ...styles.arrow, right: '12px' }}>&#10095;</button>
                         </>
-                    )}
-
-                    {imagenes.length > 1 && (
-                        <div style={styles.dots}>
-                            {imagenes.map((_, index) => (
-                                <div
-                                    key={index}
-                                    onClick={() => setFotoActiva(index)}
-                                    style={{ ...styles.dot, backgroundColor: fotoActiva === index ? '#000' : '#ccc' }}
-                                />
-                            ))}
-                        </div>
                     )}
                 </div>
 
@@ -130,13 +122,10 @@ const Producto = () => {
                                 </button>
                             ))}
                         </div>
-                        {tallaSeleccionada && (
-                            <p style={styles.stockInfo}>{tallaSeleccionada.cantidad} unidades disponibles</p>
-                        )}
                     </div>
 
                     <button style={styles.tryonBtn} onClick={() => setIsTryOnOpen(true)}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '8px' }}>
                             <path d="M12 3v19" /><path d="M5 10h14" /><path d="M5 15h14" />
                         </svg>
                         Probar en mi Avatar 3D
@@ -154,47 +143,8 @@ const Producto = () => {
                         <summary style={styles.summary}><strong>DETALLES DEL PRODUCTO</strong></summary>
                         <p style={styles.detailsText}>{producto.descripcion}</p>
                     </details>
-
-                    <details style={styles.details_section}>
-                        <summary style={styles.summary}><strong>GUÍA DE TALLAS</strong></summary>
-                        <div style={{ marginTop: '15px', padding: '0 10px' }}>
-                            <img
-                                src="/assets/img/guia_tallas.png"
-                                alt="Guía de Tallas PVREZA"
-                                style={{
-                                    width: '100%',
-                                    height: 'auto',
-                                    display: 'block',
-                                    borderRadius: '4px'
-                                }}
-                            />
-                        </div>
-                    </details>
                 </div>
             </section>
-
-            {relacionados.length > 0 && (
-                <section style={stylesRel.section}>
-                    <h2 style={stylesRel.titulo}>TAMBIÉN TE PUEDE GUSTAR</h2>
-                    <div style={stylesRel.grid}>
-                        {relacionados.map(p => (
-                            <Link
-                                to={`/producto/${p.id_producto}`}
-                                key={p.id_producto}
-                                style={stylesRel.card}
-                            >
-                                <img
-                                    src={`${BACKEND_URL}${p.imagen_url}`}
-                                    alt={p.nombre}
-                                    style={stylesRel.img}
-                                />
-                                <p style={stylesRel.nombre}>{p.nombre}</p>
-                                <p style={stylesRel.precio}>{p.precio} €</p>
-                            </Link>
-                        ))}
-                    </div>
-                </section>
-            )}
 
             {/* MODAL PROBADOR 3D */}
             {isTryOnOpen && (
@@ -202,22 +152,51 @@ const Producto = () => {
                     <div style={styles.modalContent}>
                         <button onClick={() => setIsTryOnOpen(false)} style={styles.modalClose}>&times;</button>
                         <div style={styles.modalLayout}>
+                            
+                            {/* 💥 LADO IZQUIERDO: EL AVATAR REAL */}
                             <div style={styles.modalCanvas}>
-                                <p style={{ color: '#666' }}>Cargando probador...</p>
+                                <AvatarCreator 
+                                    altura={Number(altura)} 
+                                    peso={Number(peso)} 
+                                    onAvatarGuardado={() => {}} 
+                                />
                             </div>
+
+                            {/* 💥 LADO DERECHO: CONTROLES INTELIGENTES */}
                             <div style={styles.modalControls}>
-                                <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', letterSpacing: '2px' }}>CONFIGURA TU AVATAR</h2>
-                                <label>Altura</label>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '8px' }}>
+                                <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', letterSpacing: '2px' }}>
+                                    {isAuthenticated ? 'TUS MEDIDAS GUARDADAS' : 'CONFIGURA TU AVATAR'}
+                                </h2>
+                                
+                                {isAuthenticated ? (
+                                    <p style={{ fontSize: '0.9rem', color: '#444', marginBottom: '20px', lineHeight: '1.6' }}>
+                                        Hola <strong>{user.nombre}</strong>, estamos proyectando tu avatar con los datos de tu perfil.
+                                    </p>
+                                ) : (
+                                    <p style={{ fontSize: '0.85rem', color: '#dc3545', marginBottom: '20px' }}>
+                                        ⚠️ No has iniciado sesión. Introduce tus datos manualmente para el probador virtual.
+                                    </p>
+                                )}
+
+                                <label style={styles.label}>Altura</label>
+                                <div style={styles.inputGroup}>
                                     <input type="range" min="150" max="210" value={altura} onChange={e => setAltura(e.target.value)} style={{ flex: 1 }} />
-                                    <span style={{ fontWeight: 'bold', minWidth: '60px' }}>{altura} cm</span>
+                                    <span style={styles.valDisplay}>{altura} cm</span>
                                 </div>
-                                <label style={{ marginTop: '20px', display: 'block' }}>Peso</label>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '8px' }}>
+
+                                <label style={{ ...styles.label, marginTop: '20px' }}>Peso</label>
+                                <div style={styles.inputGroup}>
                                     <input type="range" min="50" max="120" value={peso} onChange={e => setPeso(e.target.value)} style={{ flex: 1 }} />
-                                    <span style={{ fontWeight: 'bold', minWidth: '60px' }}>{peso} kg</span>
+                                    <span style={styles.valDisplay}>{peso} kg</span>
                                 </div>
-                                <p style={{ fontSize: '0.8rem', color: '#888', marginTop: '24px' }}>El modelo 3D se ajustará automáticamente.</p>
+
+                                <div style={styles.infoBox}>
+                                    <p style={{ margin: 0 }}><strong>Talla recomendada:</strong> {altura > 180 || peso > 85 ? 'XL' : 'L'}</p>
+                                </div>
+
+                                {!isAuthenticated && (
+                                    <Link to="/login" style={styles.loginLink}>¿Quieres guardar tus medidas? Inicia sesión</Link>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -227,7 +206,9 @@ const Producto = () => {
     );
 };
 
+// --- ESTILOS ACTUALIZADOS ---
 const styles = {
+    // ... mantén tus estilos de loading, banner, product, carousel, details, etc.
     loading: { textAlign: 'center', padding: '100px', letterSpacing: '3px', color: '#999' },
     banner: { textAlign: 'center', padding: '32px 24px', borderBottom: '1px solid #e5e5e5' },
     bannerTitle: { fontSize: '22px', letterSpacing: '6px', fontWeight: '700', margin: '0 0 6px' },
@@ -238,8 +219,6 @@ const styles = {
     carouselTrack: { display: 'flex', transition: 'transform 0.4s ease-in-out' },
     carouselImg: { width: '100%', minWidth: '100%', flexShrink: 0, objectFit: 'cover', aspectRatio: '3/4' },
     arrow: { position: 'absolute', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.8)', border: 'none', cursor: 'pointer', fontSize: '18px', padding: '8px 12px', zIndex: 10 },
-    dots: { display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '12px' },
-    dot: { width: '8px', height: '8px', borderRadius: '50%', cursor: 'pointer', transition: 'background-color 0.3s' },
     details: { display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '16px' },
     nombre: { fontSize: '20px', letterSpacing: '3px', fontWeight: '700', margin: 0 },
     precio: { fontSize: '16px', color: '#333', margin: 0 },
@@ -248,28 +227,24 @@ const styles = {
     tallaBtn: { padding: '10px 18px', border: '1px solid #e5e5e5', backgroundColor: '#fff', cursor: 'pointer', fontSize: '13px', letterSpacing: '1px' },
     tallaBtnSelected: { border: '1px solid #000', backgroundColor: '#000', color: '#fff' },
     tallaBtnDisabled: { color: '#ccc', cursor: 'not-allowed' },
-    stockInfo: { fontSize: '11px', color: '#888', marginTop: '8px' },
-    tryonBtn: { display: 'flex', alignItems: 'center', padding: '12px 20px', border: '1px solid #000', backgroundColor: '#fff', cursor: 'pointer', fontSize: '12px', letterSpacing: '2px' },
+    tryonBtn: { display: 'flex', alignItems: 'center', padding: '12px 20px', border: '1px solid #000', backgroundColor: '#fff', cursor: 'pointer', fontSize: '12px', letterSpacing: '2px', marginTop: '10px' },
     cartBtn: { padding: '14px', backgroundColor: '#000', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '13px', letterSpacing: '3px', fontWeight: '600' },
     details_section: { borderTop: '1px solid #e5e5e5', paddingTop: '12px' },
     summary: { cursor: 'pointer', fontSize: '13px', letterSpacing: '1px', padding: '4px 0' },
     detailsText: { fontSize: '13px', color: '#666', marginTop: '8px', lineHeight: '1.8' },
-    modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' },
-    modalContent: { backgroundColor: '#fff', width: '90%', maxWidth: '900px', maxHeight: '90vh', overflow: 'auto', padding: '32px', position: 'relative' },
-    modalClose: { position: 'absolute', top: '16px', right: '20px', background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer' },
-    modalLayout: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginTop: '16px' },
-    modalCanvas: { backgroundColor: '#f5f5f5', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-    modalControls: { display: 'flex', flexDirection: 'column' },
-};
-
-const stylesRel = {
-    section: { maxWidth: '1100px', margin: '64px auto', padding: '0 24px' },
-    titulo: { fontSize: '12px', letterSpacing: '4px', color: '#999', marginBottom: '32px', textAlign: 'center' },
-    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '24px' },
-    card: { textDecoration: 'none', color: '#000' },
-    img: { width: '100%', aspectRatio: '3/4', objectFit: 'cover' },
-    nombre: { fontSize: '12px', letterSpacing: '2px', fontWeight: '600', marginTop: '12px', marginBottom: '4px' },
-    precio: { fontSize: '12px', color: '#666' },
+    
+    // MODAL
+    modalOverlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' },
+    modalContent: { backgroundColor: '#fff', width: '95%', maxWidth: '1000px', height: '85vh', overflow: 'hidden', position: 'relative', borderRadius: '4px' },
+    modalClose: { position: 'absolute', top: '20px', right: '25px', background: 'none', border: 'none', fontSize: '32px', cursor: 'pointer', zIndex: 10 },
+    modalLayout: { display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', height: '100%' },
+    modalCanvas: { backgroundColor: '#f9f9f9', height: '100%', borderRight: '1px solid #eee' },
+    modalControls: { padding: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'center' },
+    label: { fontSize: '11px', letterSpacing: '2px', textTransform: 'uppercase', color: '#888' },
+    inputGroup: { display: 'flex', alignItems: 'center', gap: '15px', marginTop: '10px' },
+    valDisplay: { fontWeight: '700', fontSize: '14px', minWidth: '60px', textAlign: 'right' },
+    infoBox: { marginTop: '30px', padding: '20px', backgroundColor: '#f0f0f0', borderLeft: '4px solid #000' },
+    loginLink: { marginTop: '20px', fontSize: '12px', color: '#000', textDecoration: 'underline', fontWeight: '600' }
 };
 
 export default Producto;
