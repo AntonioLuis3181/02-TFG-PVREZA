@@ -10,7 +10,8 @@ const register = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { nombre, email, password, altura, peso, edad } = req.body;
+  // 💥 AÑADIDO: Extraemos avatar_url de lo que nos envía React
+  const { nombre, email, password, altura, peso, edad, avatar_url } = req.body;
 
   try {
     // 2. Comprobar si el email ya existe
@@ -29,7 +30,8 @@ const register = async (req, res) => {
       password: hashedPassword,
       altura,
       peso,
-      edad
+      edad,
+      avatar_url // 💥 AÑADIDO: Se lo pasamos a tu modelo
     });
 
     // 5. Generar token JWT
@@ -42,7 +44,13 @@ const register = async (req, res) => {
     res.status(201).json({
       message: 'Usuario registrado correctamente',
       token,
-      user: { id: newUserId, nombre, email, rol: 'user' }
+      user: { 
+        id: newUserId, 
+        nombre, 
+        email, 
+        rol: 'user', 
+        avatar_url // 💥 AÑADIDO: Lo devolvemos para que el Perfil de React lo pueda cargar al instante
+      }
     });
 
   } catch (error) {
@@ -87,7 +95,8 @@ const login = async (req, res) => {
         id: user.id_usuario,
         nombre: user.nombre,
         email: user.email,
-        rol: user.rol
+        rol: user.rol,
+        avatar_url: user.avatar_url
       }
     });
 
